@@ -1,3 +1,11 @@
+// SquiggleDraw
+//
+// A processing sketch by Gregg Wygonik
+//
+// https://github.com/gwygonik/SquiggleDraw
+//
+// Contributions 
+
 import controlP5.*;
 import processing.svg.*;
 
@@ -18,6 +26,7 @@ int imageScaleUp = 3;
 
 float r = 0.0;
 float a = 0.0;
+int strokeWidth = 1;
 
 float startx,starty;
 
@@ -29,7 +38,7 @@ boolean needsReload = true;
 
 boolean invert = false;
 
-String imageName = "kitten.jpg";//"IMG_6887bw.png";//"kitten-1.jpg";//"pluto.jpg";
+String imageName = "Rachel-Carson.jpg";
 
 void setup() {
   size(100,100);
@@ -43,13 +52,16 @@ void setup() {
   gui.addToggle("tglInvert").setCaptionLabel("Invert Colors").setPosition(10,80).setValue(false).setMode(ControlP5.SWITCH).setColorCaptionLabel(color(0));
   gui.getController("tglInvert").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addSlider("sldAmplitude").setSize(130,30).setCaptionLabel("Squiggle Strength").setPosition(10,140).setRange(0,20).setValue(5).setColorCaptionLabel(color(0));
+  gui.addSlider("sldAmplitude").setSize(130,30).setCaptionLabel("Squiggle Strength").setPosition(10,140).setRange(0,20).setValue(13).setColorCaptionLabel(color(0));
   gui.getController("sldAmplitude").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addSlider("sldXSpacing").setSize(130,30).setCaptionLabel("Detail").setPosition(10,200).setRange(1,30).setValue(27).setColorCaptionLabel(color(0));
+  gui.addSlider("sldXSpacing").setSize(130,30).setCaptionLabel("Detail").setPosition(10,200).setRange(1,30).setValue(28).setColorCaptionLabel(color(0));
   gui.getController("sldXSpacing").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,300).setColorCaptionLabel(color(255));
+  gui.addSlider("lineWidth").setSize(130,30).setCaptionLabel("Line Width").setPosition(10,260).setRange(1,10).setValue(5).setColorCaptionLabel(color(0));
+  gui.getController("lineWidth").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+
+  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,360).setColorCaptionLabel(color(255));
   gui.getController("bangSave").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
   smooth();
@@ -99,7 +111,8 @@ void createPic() {
   
   stroke(0);
   noFill();
-  
+  strokeWeight(strokeWidth);
+ 
   startx = 0.0;
   starty = 0.0;
 
@@ -156,6 +169,11 @@ void sldXSpacing(int value) {
 void tglInvert(boolean value) {
   invert = value;
   needsReload = true;
+  redrawImage();
+}
+
+void lineWidth(int value) {
+  strokeWidth = value;
   redrawImage();
 }
 
