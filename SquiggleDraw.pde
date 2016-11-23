@@ -76,8 +76,12 @@ void setup() {
   gui.addSlider("maxBrightness").setSize(130,30).setCaptionLabel("White Point").setPosition(10,500).setRange(0,255).setValue(255).setColorCaptionLabel(color(0));
   gui.getController("maxBrightness").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,600).setColorCaptionLabel(color(255));
+  gui.addBang("bangLoad").setSize(130,30).setCaptionLabel("Load image").setPosition(10,600).setColorCaptionLabel(color(255));
+  gui.getController("bangLoad").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+
+  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,660).setColorCaptionLabel(color(255));
   gui.getController("bangSave").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+
 
   smooth();
   background(255);
@@ -86,6 +90,12 @@ void setup() {
 
 void loadMainImage(String inImageName) {
   p1 = loadImage(inImageName);
+  
+  int tempheight = p1.height;
+  if (tempheight < 720)
+    tempheight = 720;
+  surface.setSize(p1.width + 150, tempheight);
+  
   surface.setSize(p1.width + 150, p1.height);
 
   // filter image
@@ -163,6 +173,55 @@ void createPic() {
   s.scale(1.0/imageScaleUp);
   shape(s,isRecording ? 0 : 150,0);
 }
+
+void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the cancel selected.");
+  } else {
+    String loadPath = selection.getAbsolutePath();
+
+    // If a file was selected, print path to file 
+    println("Selected file: " + loadPath); 
+
+    String[] p = splitTokens(loadPath, ".");
+    boolean fileOK = false;
+
+    if ( p[p.length - 1].equals("GIF"))
+      fileOK = true;
+    if ( p[p.length - 1].equals("gif"))
+      fileOK = true;      
+    if ( p[p.length - 1].equals("JPG"))
+      fileOK = true;
+    if ( p[p.length - 1].equals("jpg"))
+      fileOK = true;   
+    if ( p[p.length - 1].equals("TGA"))
+      fileOK = true;
+    if ( p[p.length - 1].equals("tga"))
+      fileOK = true;   
+    if ( p[p.length - 1].equals("PNG"))
+      fileOK = true;
+    if ( p[p.length - 1].equals("png"))
+      fileOK = true;   
+
+    if (fileOK) {
+      println("File type OK."); 
+      imageName = loadPath;
+      loadMainImage(imageName);
+      createSecondaryImage();
+      redrawImage();
+  } else {
+      // Can't load file
+      println("ERROR: BAD FILE TYPE");
+    }
+  }
+}
+
+void bangLoad(float theValue) {  
+  println(":::LOAD JPG, GIF or PNG FILE:::");
+
+  selectInput("Select an image file to open:", "fileSelected");  // Opens file chooser
+} //End Load File
+
 
 void sldLines(int value) {
   ystep = value;
