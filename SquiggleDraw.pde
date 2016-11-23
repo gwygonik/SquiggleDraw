@@ -95,8 +95,6 @@ void loadMainImage(String inImageName) {
   if (tempheight < 720)
     tempheight = 720;
   surface.setSize(p1.width + 150, tempheight);
-  
-  surface.setSize(p1.width + 150, p1.height);
 
   // filter image
   p1.filter(GRAY);
