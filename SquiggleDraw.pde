@@ -18,9 +18,10 @@ PImage p1;
 PImage p2;
 
 
-int ystep = 160;//80;
-int ymult = 6;//5;
+int ystep = 160;
+int ymult = 6;
 int xstep = 3;
+float xsmooth = 128.0;
 
 int imageScaleUp = 3;
 
@@ -31,6 +32,8 @@ int strokeWidth = 1;
 float startx,starty;
 
 int b,oldb;
+int maxB = 255;
+int minB = 0;
 
 boolean isRunning = true;
 boolean isRecording = false;
@@ -58,10 +61,22 @@ void setup() {
   gui.addSlider("sldXSpacing").setSize(130,30).setCaptionLabel("Detail").setPosition(10,200).setRange(1,30).setValue(28).setColorCaptionLabel(color(0));
   gui.getController("sldXSpacing").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addSlider("lineWidth").setSize(130,30).setCaptionLabel("Line Width").setPosition(10,260).setRange(1,10).setValue(5).setColorCaptionLabel(color(0));
+  gui.addSlider("sldXFrequency").setSize(130,30).setCaptionLabel("Frequency").setPosition(10,260).setRange(5.0,256.0).setValue(128.0).setColorCaptionLabel(color(0));
+  gui.getController("sldXFrequency").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+
+  gui.addSlider("sldImgScale").setSize(130,30).setCaptionLabel("Resolution Scale").setPosition(10,320).setRange(1,3).setValue(3).setColorCaptionLabel(color(0));
+  gui.getController("sldImgScale").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+
+  gui.addSlider("lineWidth").setSize(130,30).setCaptionLabel("Line Width").setPosition(10,380).setRange(1,10).setValue(5).setColorCaptionLabel(color(0));
   gui.getController("lineWidth").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,360).setColorCaptionLabel(color(255));
+  gui.addSlider("minBrightness").setSize(130,30).setCaptionLabel("Black Point").setPosition(10,440).setRange(0,255).setValue(0).setColorCaptionLabel(color(0));
+  gui.getController("minBrightness").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+
+  gui.addSlider("maxBrightness").setSize(130,30).setCaptionLabel("White Point").setPosition(10,500).setRange(0,255).setValue(255).setColorCaptionLabel(color(0));
+  gui.getController("maxBrightness").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+
+  gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,600).setColorCaptionLabel(color(255));
   gui.getController("bangSave").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
   smooth();
@@ -82,7 +97,7 @@ void loadMainImage(String inImageName) {
 }
 
 void createSecondaryImage() {
-  p2 = createImage(p1.width*imageScaleUp,p1.height*imageScaleUp,RGB);
+  p2 = createImage(p1.width*imageScaleUp,p1.height*imageScaleUp,ALPHA);
   p2.copy(p1,0,0,p1.width,p1.height,0,0,p1.width*imageScaleUp,p1.height*imageScaleUp);
 }
 
@@ -125,18 +140,19 @@ void createPic() {
     a = 0.0;
     startx = 0;
     
-    b = (int)brightness(p2.get(1,y));
+    b = (int)alpha(p2.get(1,y));
     float z = 255.0-b;
     r = 5;
     starty = y + sin(a)*r;
     
     liner.vertex(startx,starty);
     
-    for (int x = 0;x<p2.width;x+=xstep) {
-      b = (int)brightness(p2.get(x,y));
-      z = max(250.0-b,0);
+    for (int x = 1;x<p2.width;x+=xstep) {
+      b = (int)alpha(p2.get(x,y));
+      b = max(minB,b);
+      z = max(maxB-b,0);
       r = z/ystep*ymult;
-      a += z/128.0;
+      a += z/xsmooth;
       liner.vertex(x,y+sin(a)*r);
     }
     liner.endShape();
@@ -177,10 +193,32 @@ void lineWidth(int value) {
   redrawImage();
 }
 
+void maxBrightness(int value) {
+  maxB = value;
+  redrawImage();
+}
+
+void minBrightness(int value) {
+  minB = value;
+  redrawImage();
+}
+
 void bangSave() {
   isRecording = true;
   isRunning = true;
   redraw();
+}
+
+void sldXFrequency(float value) {
+  xsmooth = 257.0 - value;
+  needsReload = false;
+  redrawImage();
+}
+
+void sldImgScale(int value) {
+  imageScaleUp = value;
+  needsReload = true;
+  redrawImage();
 }
 
 void redrawImage() {
