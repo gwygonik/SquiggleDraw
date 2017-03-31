@@ -6,6 +6,9 @@ You can use the saved SVG file to print from Inkscape/AI/etc, draw with a pen on
 
 This is code for Processing (http://processing.org)
 
+Additional dependency: Download and install controlP5 in your processing libraries directory. ( http://www.sojamo.de/libraries/controlP5/ )
+
+
 Features: 
 * Simple UI to load/save images, adjust parameters related to the sine waves, and basic image adjustements
 * Saved SVG is larger than original image for detail 
