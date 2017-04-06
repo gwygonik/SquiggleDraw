@@ -39,6 +39,8 @@ boolean isRunning = true;
 boolean isRecording = false;
 boolean needsReload = true;
 
+//boolean isInit = false;
+
 boolean invert = false;
 
 //! TODO: scroll bar for big images 
@@ -47,6 +49,7 @@ String imageName = "Rachel-Carson.jpg";
 
 void setup() {
   size(100,100);
+  //surface.setResizable(true);
   loadMainImage(imageName);
   createSecondaryImage();
 
@@ -89,19 +92,30 @@ void setup() {
   // add 'default' button
   gui.addBang("bangDefault").setSize(130,30).setCaptionLabel("Default").setPosition(10,720).setColorCaptionLabel(color(255));
   gui.getController("bangDefault").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
-
+  
+  //// add 'fit' button. fit image to window size 
+  //gui.addBang("bangFit").setSize(65, 30).setCaptionLabel("Fit").setPosition(10, 780).setColorCaptionLabel(color(255));
+  //gui.getController("bangFit").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+  
+  //// add 'full' button. load orig image size
+  //gui.addBang("bangFull").setSize(65, 30).setCaptionLabel("Full").setPosition(10 + 66, 780).setColorCaptionLabel(color(255));
+  //gui.getController("bangFull").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+    
   smooth();
   background(255);
   shapeMode(CORNER);
 }
 
 void loadMainImage(String inImageName) {
+  //if (isInit) { return; }
+  println("loadMainImage");
+  //isInit = true;
   p1 = loadImage(inImageName);
   
   int tempheight = p1.height;
-  if (tempheight < 720 + 60)
-    tempheight = 720 + 60;
-  
+  if (tempheight < 720 + 120)
+    tempheight = 720 + 120;
+      
   surface.setSize(p1.width + 150, tempheight);
 
   // filter image
@@ -110,6 +124,9 @@ void loadMainImage(String inImageName) {
   if (invert) {
     p1.filter(INVERT);
   }
+  
+  needsReload = true;
+  redrawImage();
 }
 
 void createSecondaryImage() {
@@ -218,6 +235,7 @@ void fileSelected(File selection) {
     if (fileOK) {
       println("File type OK."); 
       imageName = loadPath;
+      //isInit = false;
       loadMainImage(imageName);
       createSecondaryImage();
       redrawImage();
@@ -319,3 +337,16 @@ void bangDefault() {
   gui.getController("minBrightness").setValue(0);
   gui.getController("maxBrightness").setValue(255);
 }
+
+//void bangFit() {    
+//  println("Fit");
+//  p1.resize(0, height);
+//  needsReload = true;
+//  redrawImage();
+//}
+
+//void bangFull() {
+//  println("Full");
+//  isInit = false;
+//  loadMainImage(imageName);
+//}
