@@ -41,6 +41,8 @@ boolean needsReload = true;
 
 boolean invert = false;
 
+//! TODO: scroll bar for big images 
+
 String imageName = "Rachel-Carson.jpg";
 
 void setup() {
@@ -76,7 +78,9 @@ void setup() {
   gui.addSlider("maxBrightness").setSize(130,30).setCaptionLabel("White Point").setPosition(10,500).setRange(0,255).setValue(255).setColorCaptionLabel(color(0));
   gui.getController("maxBrightness").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addBang("bangLoad").setSize(130,30).setCaptionLabel("Load image").setPosition(10,600).setColorCaptionLabel(color(255));
+  // added: .setTriggerEvent(Bang.RELEASE)
+  // now you don't have to click 's' to save. save button work fine now. 
+  gui.addBang("bangLoad").setSize(130,30).setTriggerEvent(Bang.RELEASE).setCaptionLabel("Load image").setPosition(10,600).setColorCaptionLabel(color(255));
   gui.getController("bangLoad").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
   gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,660).setColorCaptionLabel(color(255));
@@ -94,6 +98,7 @@ void loadMainImage(String inImageName) {
   int tempheight = p1.height;
   if (tempheight < 720)
     tempheight = 720;
+  
   surface.setSize(p1.width + 150, tempheight);
 
   // filter image
@@ -112,7 +117,13 @@ void createSecondaryImage() {
 void draw() {
   if (isRunning) {
     if (isRecording) {
-      beginRecord(SVG, "squiggleImage_" + millis() + ".svg");
+      // save to file
+      // was: beginRecord(SVG, "squiggleImage_" + millis() + ".svg");
+      String[] p = splitTokens(imageName, "."); // split by point to know path without suffix
+      // save to dir where is opening file
+      String savePath = p[p.length - 2] + "_" + day() + hour() + minute() +  second() + ".svg";           
+      println(savePath);
+      beginRecord(SVG, savePath);
     }
     createPic();
     if (isRecording) {
@@ -214,7 +225,8 @@ void fileSelected(File selection) {
   }
 }
 
-void bangLoad(float theValue) {  
+// removed arg: float theValue
+void bangLoad() {  
   println(":::LOAD JPG, GIF or PNG FILE:::");
 
   selectInput("Select an image file to open:", "fileSelected");  // Opens file chooser
@@ -284,11 +296,11 @@ void redrawImage() {
 }
 
 void keyPressed() {
-  if (key == ' ') {
+ if (key == ' ') {
     // nothing here
-  } else if (key == 's') {
+  } else if (key == 's') { // save
     isRecording = true;
     isRunning = true;
     redraw();
-  }
+  } 
 }
