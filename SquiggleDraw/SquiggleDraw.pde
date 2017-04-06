@@ -85,7 +85,10 @@ void setup() {
 
   gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,660).setColorCaptionLabel(color(255));
   gui.getController("bangSave").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
-
+  
+  // add 'default' button
+  gui.addBang("bangDefault").setSize(130,30).setCaptionLabel("Default").setPosition(10,720).setColorCaptionLabel(color(255));
+  gui.getController("bangDefault").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
   smooth();
   background(255);
@@ -96,8 +99,8 @@ void loadMainImage(String inImageName) {
   p1 = loadImage(inImageName);
   
   int tempheight = p1.height;
-  if (tempheight < 720)
-    tempheight = 720;
+  if (tempheight < 720 + 60)
+    tempheight = 720 + 60;
   
   surface.setSize(p1.width + 150, tempheight);
 
@@ -303,4 +306,16 @@ void keyPressed() {
     isRunning = true;
     redraw();
   } 
+}
+
+void bangDefault() {
+  gui.getController("sldLines").setValue(120);
+  gui.getController("tglInvert").setValue(0);
+  gui.getController("sldAmplitude").setValue(13);
+  gui.getController("sldXSpacing").setValue(28);
+  gui.getController("sldXFrequency").setValue(128);
+  gui.getController("sldImgScale").setValue(3);
+  gui.getController("lineWidth").setValue(5);
+  gui.getController("minBrightness").setValue(0);
+  gui.getController("maxBrightness").setValue(255);
 }
