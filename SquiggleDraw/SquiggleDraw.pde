@@ -39,12 +39,17 @@ boolean isRunning = true;
 boolean isRecording = false;
 boolean needsReload = true;
 
+//boolean isInit = false;
+
 boolean invert = false;
+
+//! TODO: scroll bar for big images 
 
 String imageName = "Rachel-Carson.jpg";
 
 void setup() {
   size(100,100);
+  //surface.setResizable(true);
   loadMainImage(imageName);
   createSecondaryImage();
 
@@ -76,24 +81,41 @@ void setup() {
   gui.addSlider("maxBrightness").setSize(130,30).setCaptionLabel("White Point").setPosition(10,500).setRange(0,255).setValue(255).setColorCaptionLabel(color(0));
   gui.getController("maxBrightness").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addBang("bangLoad").setSize(130,30).setCaptionLabel("Load image").setPosition(10,600).setColorCaptionLabel(color(255));
+  // added: .setTriggerEvent(Bang.RELEASE)
+  // now you don't have to click 's' to save. save button work fine now. 
+  gui.addBang("bangLoad").setSize(130,30).setTriggerEvent(Bang.RELEASE).setCaptionLabel("Load image").setPosition(10,600).setColorCaptionLabel(color(255));
   gui.getController("bangLoad").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
   gui.addBang("bangSave").setSize(130,30).setCaptionLabel("Save SVG").setPosition(10,660).setColorCaptionLabel(color(255));
   gui.getController("bangSave").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
-
-
+  
+  // add 'default' button
+  gui.addBang("bangDefault").setSize(130,30).setCaptionLabel("Default").setPosition(10,720).setColorCaptionLabel(color(255));
+  gui.getController("bangDefault").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+  
+  //// add 'fit' button. fit image to window size 
+  //gui.addBang("bangFit").setSize(65, 30).setCaptionLabel("Fit").setPosition(10, 780).setColorCaptionLabel(color(255));
+  //gui.getController("bangFit").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+  
+  //// add 'full' button. load orig image size
+  //gui.addBang("bangFull").setSize(65, 30).setCaptionLabel("Full").setPosition(10 + 66, 780).setColorCaptionLabel(color(255));
+  //gui.getController("bangFull").getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+    
   smooth();
   background(255);
   shapeMode(CORNER);
 }
 
 void loadMainImage(String inImageName) {
+  //if (isInit) { return; }
+  println("loadMainImage");
+  //isInit = true;
   p1 = loadImage(inImageName);
   
   int tempheight = p1.height;
-  if (tempheight < 720)
-    tempheight = 720;
+  if (tempheight < 720 + 120)
+    tempheight = 720 + 120;
+      
   surface.setSize(p1.width + 150, tempheight);
 
   // filter image
@@ -102,6 +124,9 @@ void loadMainImage(String inImageName) {
   if (invert) {
     p1.filter(INVERT);
   }
+  
+  needsReload = true;
+  redrawImage();
 }
 
 void createSecondaryImage() {
@@ -112,7 +137,13 @@ void createSecondaryImage() {
 void draw() {
   if (isRunning) {
     if (isRecording) {
-      beginRecord(SVG, "squiggleImage_" + millis() + ".svg");
+      // save to file
+      // was: beginRecord(SVG, "squiggleImage_" + millis() + ".svg");
+      String[] p = splitTokens(imageName, "."); // split by point to know path without suffix
+      // save to dir where is opening file
+      String savePath = p[p.length - 2] + "_" + day() + hour() + minute() +  second() + ".svg";           
+      println(savePath);
+      beginRecord(SVG, savePath);
     }
     createPic();
     if (isRecording) {
@@ -204,6 +235,7 @@ void fileSelected(File selection) {
     if (fileOK) {
       println("File type OK."); 
       imageName = loadPath;
+      //isInit = false;
       loadMainImage(imageName);
       createSecondaryImage();
       redrawImage();
@@ -214,7 +246,8 @@ void fileSelected(File selection) {
   }
 }
 
-void bangLoad(float theValue) {  
+// removed arg: float theValue
+void bangLoad() {  
   println(":::LOAD JPG, GIF or PNG FILE:::");
 
   selectInput("Select an image file to open:", "fileSelected");  // Opens file chooser
@@ -284,11 +317,36 @@ void redrawImage() {
 }
 
 void keyPressed() {
-  if (key == ' ') {
+ if (key == ' ') {
     // nothing here
-  } else if (key == 's') {
+  } else if (key == 's') { // save
     isRecording = true;
     isRunning = true;
     redraw();
-  }
+  } 
 }
+
+void bangDefault() {
+  gui.getController("sldLines").setValue(120);
+  gui.getController("tglInvert").setValue(0);
+  gui.getController("sldAmplitude").setValue(13);
+  gui.getController("sldXSpacing").setValue(28);
+  gui.getController("sldXFrequency").setValue(128);
+  gui.getController("sldImgScale").setValue(3);
+  gui.getController("lineWidth").setValue(5);
+  gui.getController("minBrightness").setValue(0);
+  gui.getController("maxBrightness").setValue(255);
+}
+
+//void bangFit() {    
+//  println("Fit");
+//  p1.resize(0, height);
+//  needsReload = true;
+//  redrawImage();
+//}
+
+//void bangFull() {
+//  println("Full");
+//  isInit = false;
+//  loadMainImage(imageName);
+//}
