@@ -177,14 +177,7 @@ void createPic() {
     liner = createShape(PShape.PATH);
     liner.beginShape();
     a = 0.0;
-    startx = 0;
-    
-    b = (int)alpha(p2.get(1,y));
-    float z = 255.0-b;
-    r = 5;
-    starty = y + sin(a)*r;
-    
-    liner.vertex(startx,starty);
+    liner.vertex(0,y);
     
     for (int x = 1;x<p2.width;x+=xstep) {
       b = (int)alpha(p2.get(x,y));
