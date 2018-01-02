@@ -29,7 +29,7 @@ float r = 0.0;
 float a = 0.0;
 int strokeWidth = 1;
 
-float startx,starty;
+float startx,starty, z;
 
 int b,oldb;
 int maxB = 255;
