@@ -6,20 +6,20 @@
 
 
 /* 
-
-Additional credits
-
-Contributions by Maksim Surguy 
-https://github.com/msurguy
-
-Contributions by Ivan Moroz (sNow)
-https://github.com/sNow32/a
-
-Contributions by Windell H. Oskay
-www.evilmadscientist.com
-https://github.com/evil-mad/
-
-*/
+ 
+ Additional credits
+ 
+ Contributions by Maksim Surguy 
+ https://github.com/msurguy
+ 
+ Contributions by Ivan Moroz (sNow)
+ https://github.com/sNow32/a
+ 
+ Contributions by Windell H. Oskay
+ www.evilmadscientist.com
+ https://github.com/evil-mad/
+ 
+ */
 
 
 import controlP5.*;
@@ -193,7 +193,7 @@ void createPic() {
   starty = 0.0;
 
   if (!isRecording)
-  background(255);
+    background(255);
 
   float scaleFactor = 1.0/imageScaleUp;
   float xOffset = isRecording ? 0 : 150;
@@ -221,7 +221,7 @@ void createPic() {
    The maximum phase increment in distance xstep should then be:
    
    maxPhaseIncr = 2 Pi * N = 2 * Pi *  xstep / (2 * strokeWidth) 
-                = 2Pi *  xstep / strokeWidth
+   = 2Pi *  xstep / strokeWidth
    
    We do not need to include the scaling factors, since
    both the step size and stroke width are scaled the same way.
@@ -405,7 +405,7 @@ void createPic() {
       deltaPhase = phase - lastPhase; // Change in phase since last *vertex*
       // (Vertices do not fall along the x "grid", but where they need to.)
 
-      if (!finalStep)  // Skip to end points if this is the final step.
+      if (!finalStep)  // Skip to end points if this is the last point in the row.
         if (deltaPhase > HALF_PI) // Only add vertices if true.
         {
           /* 
@@ -434,12 +434,6 @@ void createPic() {
 
             curveVertex(xOffset + scaleFactor * lastX, scaleFactor *(y+sin(lastPhase)*lastAmpl));
           }
-        } else if (finalStep)
-        { // Add a vertex if this is the last point on the row, 
-          // even if there's not a full pi/2 of phase.
-
-          curveVertex(xOffset + scaleFactor * x, scaleFactor *(y+sin(phase)*r));   
-          lastX = x;
         }
     }
 
