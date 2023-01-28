@@ -33,6 +33,11 @@ PShape liner;
 PImage p1;
 PImage p2;
 
+// toggle button images to make UI less ambiguous
+// note that the actual images are reversed due to a bug in controlP5
+PImage toggleImage_ON;
+PImage toggleImage_OFF;
+
 int ystep = 160;
 int ymult = 6;
 int xstep = 3;
@@ -66,7 +71,11 @@ boolean connectEnds = false;
 String imageName = "Rachel-Carson.jpg";
 
 void setup() {
-  size(100, 100);
+  size(300, 1000);
+  
+  toggleImage_ON = loadImage("tglOn.png");
+  toggleImage_OFF = loadImage("tglOff.png");
+  
   //surface.setResizable(true);
   loadMainImage(imageName);
   createSecondaryImage();
@@ -75,11 +84,12 @@ void setup() {
   gui.addSlider("sldLines").setSize(130, 30).setCaptionLabel("Number of Lines").setPosition(10, 20).setRange(10, 200).setValue(120).setColorCaptionLabel(color(0));
   gui.getController("sldLines").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
 
-  gui.addToggle("tglInvert").setCaptionLabel("Invert Colors").setPosition(10, 80).setValue(false).setMode(ControlP5.SWITCH).setColorCaptionLabel(color(0));
-  gui.getController("tglInvert").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+  gui.addTextlabel("lblInvert").setText("INVERT COLORS").setPosition(7,68).setColor(color(0)).setFont(gui.BitFontStandard58);
+  gui.addToggle("tglInvert").setPosition(10, 80).setValue(false).setImages(toggleImage_ON, toggleImage_OFF);
 
-  gui.addToggle("tglConnect").setCaptionLabel("Connect Ends").setPosition(80, 80).setValue(false).setMode(ControlP5.SWITCH).setColorCaptionLabel(color(0));
-  gui.getController("tglConnect").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
+  gui.addTextlabel("lblConnect").setText("CONNECT ENDS").setPosition(77,68).setColor(color(0)).setFont(gui.BitFontStandard58);
+  gui.addToggle("tglConnect").setPosition(80, 80).setValue(false).setImages(toggleImage_ON, toggleImage_OFF);
+
 
   gui.addSlider("sldAmplitude").setSize(130, 30).setCaptionLabel("Squiggle Strength").setPosition(10, 140).setRange(0, 20).setValue(13).setColorCaptionLabel(color(0));
   gui.getController("sldAmplitude").getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE);
